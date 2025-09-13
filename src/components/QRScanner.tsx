@@ -27,7 +27,6 @@ interface TrackPart {
   installationDate?: string;
   location?: string;
   status: "active" | "inspection_due" | "maintenance_required" | "retired";
-  blockchainHash: string;
   lastInspection?: string;
   nextInspection?: string;
 }
@@ -48,7 +47,6 @@ const QRScanner = () => {
       installationDate: "2024-02-20",
       location: "Track Section A-12, KM 145.2",
       status: "active",
-      blockchainHash: "0x8f3a2b1c...",
       lastInspection: "2024-08-15",
       nextInspection: "2024-11-15"
     },
@@ -61,7 +59,6 @@ const QRScanner = () => {
       installationDate: "2024-05-18",
       location: "Track Section B-8, KM 203.7",
       status: "inspection_due",
-      blockchainHash: "0x7e2d9c4f...",
       lastInspection: "2024-07-20",
       nextInspection: "2024-10-20"
     }
@@ -198,11 +195,11 @@ const QRScanner = () => {
         <Card className="industrial-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Shield className="h-5 w-5" />
+              <CheckCircle className="h-5 w-5" />
               <span>Scan Results</span>
             </CardTitle>
             <CardDescription>
-              Track part information and blockchain verification
+              Track part information and verification
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -258,15 +255,6 @@ const QRScanner = () => {
                       <p className="text-sm text-muted-foreground">{scannedPart.batchId}</p>
                     </div>
                   </div>
-                </div>
-
-                {/* Blockchain Verification */}
-                <div className="bg-muted/50 p-4 rounded-lg border border-blockchain-verified/20">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Shield className="h-4 w-4 text-blockchain-verified" />
-                    <span className="text-sm font-medium text-blockchain-verified">Blockchain Verified</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground font-mono">{scannedPart.blockchainHash}</p>
                 </div>
 
                 {/* Inspection Status */}

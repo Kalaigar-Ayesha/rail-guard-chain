@@ -8,18 +8,18 @@ import {
   Truck, 
   Wrench, 
   Search, 
-  Brain, 
   BarChart3,
-  Shield,
   Wifi,
   WifiOff,
-  RefreshCw
+  RefreshCw,
+  Menu,
+  X
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import QRScanner from "@/components/QRScanner";
 import VendorPortal from "@/components/VendorPortal";
 import DepotModule from "@/components/DepotModule";
 import InspectorModule from "@/components/InspectorModule";
-import AIAnalytics from "@/components/AIAnalytics";
 import DashboardOverview from "@/components/DashboardOverview";
 import { useToast } from "@/hooks/use-toast";
 
@@ -27,15 +27,24 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isOnline, setIsOnline] = useState(true);
   const [syncPending, setSyncPending] = useState(3);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { toast } = useToast();
 
   const handleSync = () => {
     toast({
       title: "Sync Complete",
-      description: `${syncPending} records synchronized with blockchain`,
+      description: `${syncPending} records synchronized`,
     });
     setSyncPending(0);
   };
+
+  const navigationItems = [
+    { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+    { id: "qr-scanner", label: "QR Scanner", icon: QrCode },
+    { id: "vendor", label: "Vendor Portal", icon: Truck },
+    { id: "depot", label: "Depot & Install", icon: Wrench },
+    { id: "inspector", label: "Inspector", icon: Search },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,17 +54,17 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 railway-gradient p-3 rounded-lg">
-                <Wrench className="h-8 w-8 text-primary-foreground" />
-                <div>
-                  <h1 className="text-xl font-bold text-primary-foreground">Railway Track Parts</h1>
-                  <p className="text-sm text-primary-foreground/80">Management System</p>
+                <Wrench className="h-6 w-6 sm:h-8 sm:w-8 text-primary-foreground" />
+                <div className="hidden sm:block">
+                  <h1 className="text-lg sm:text-xl font-bold text-primary-foreground">Railway Track Parts</h1>
+                  <p className="text-xs sm:text-sm text-primary-foreground/80">Management System</p>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               {/* Online/Offline Status */}
-              <div className="flex items-center space-x-2">
+              <div className="hidden sm:flex items-center space-x-2">
                 {isOnline ? (
                   <div className="flex items-center space-x-2 text-success">
                     <Wifi className="h-4 w-4" />
@@ -64,7 +73,7 @@ const Index = () => {
                 ) : (
                   <div className="flex items-center space-x-2 text-warning">
                     <WifiOff className="h-4 w-4" />
-                    <span className="text-sm font-medium">Offline Mode</span>
+                    <span className="text-sm font-medium">Offline</span>
                   </div>
                 )}
                 
@@ -81,47 +90,91 @@ const Index = () => {
                 )}
               </div>
 
-              {/* Blockchain Status */}
-              <div className="flex items-center space-x-2">
-                <Shield className="h-4 w-4 text-blockchain-verified" />
-                <Badge variant="outline" className="border-blockchain-verified text-blockchain-verified">
-                  Blockchain Verified
-                </Badge>
-              </div>
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
+              {/* Mobile Menu Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="sm:hidden"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="sm:hidden mt-4 border-t pt-4">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center justify-between py-2">
+                  {isOnline ? (
+                    <div className="flex items-center space-x-2 text-success">
+                      <Wifi className="h-4 w-4" />
+                      <span className="text-sm font-medium">Online</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2 text-warning">
+                      <WifiOff className="h-4 w-4" />
+                      <span className="text-sm font-medium">Offline</span>
+                    </div>
+                  )}
+                  
+                  {syncPending > 0 && (
+                    <Button
+                      onClick={handleSync}
+                      size="sm"
+                      variant="outline"
+                      className="flex items-center space-x-2"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      <span>Sync ({syncPending})</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-6 sm:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8 bg-card border border-border">
-            <TabsTrigger value="dashboard" className="flex items-center space-x-2">
-              <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </TabsTrigger>
-            <TabsTrigger value="qr-scanner" className="flex items-center space-x-2">
-              <QrCode className="h-4 w-4" />
-              <span className="hidden sm:inline">QR Scanner</span>
-            </TabsTrigger>
-            <TabsTrigger value="vendor" className="flex items-center space-x-2">
-              <Truck className="h-4 w-4" />
-              <span className="hidden sm:inline">Vendor Portal</span>
-            </TabsTrigger>
-            <TabsTrigger value="depot" className="flex items-center space-x-2">
-              <Wrench className="h-4 w-4" />
-              <span className="hidden sm:inline">Depot & Install</span>
-            </TabsTrigger>
-            <TabsTrigger value="inspector" className="flex items-center space-x-2">
-              <Search className="h-4 w-4" />
-              <span className="hidden sm:inline">Inspector</span>
-            </TabsTrigger>
-            <TabsTrigger value="ai-analytics" className="flex items-center space-x-2">
-              <Brain className="h-4 w-4" />
-              <span className="hidden sm:inline">AI Analytics</span>
-            </TabsTrigger>
+          {/* Desktop Navigation */}
+          <TabsList className="hidden sm:grid w-full grid-cols-5 mb-8 bg-card border border-border">
+            {navigationItems.map((item) => {
+              const IconComponent = item.icon;
+              return (
+                <TabsTrigger key={item.id} value={item.id} className="flex items-center space-x-2">
+                  <IconComponent className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
+
+          {/* Mobile Navigation */}
+          <div className="sm:hidden mb-6">
+            <div className="grid grid-cols-2 gap-2">
+              {navigationItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <Button
+                    key={item.id}
+                    variant={activeTab === item.id ? "default" : "outline"}
+                    onClick={() => setActiveTab(item.id)}
+                    className="flex items-center space-x-2 justify-center"
+                  >
+                    <IconComponent className="h-4 w-4" />
+                    <span className="text-xs">{item.label.split(' ')[0]}</span>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
 
           <TabsContent value="dashboard">
             <DashboardOverview />
@@ -141,10 +194,6 @@ const Index = () => {
 
           <TabsContent value="inspector">
             <InspectorModule />
-          </TabsContent>
-
-          <TabsContent value="ai-analytics">
-            <AIAnalytics />
           </TabsContent>
         </Tabs>
       </main>

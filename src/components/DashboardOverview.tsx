@@ -7,11 +7,9 @@ import {
   Truck, 
   Wrench, 
   Search, 
-  Brain,
   AlertTriangle,
   CheckCircle,
   Clock,
-  Shield,
   TrendingUp,
   MapPin,
   Calendar,
@@ -53,14 +51,6 @@ const DashboardOverview = () => {
     },
     {
       id: 3,
-      type: "ai_prediction",
-      message: "AI detected potential failure in Track Section B-8",
-      time: "6 hours ago",
-      icon: Brain,
-      status: "warning"
-    },
-    {
-      id: 4,
       type: "vendor",
       message: "Steel Forge Industries delivered batch EC-BATCH-2024-Q4-001",
       time: "1 day ago",
@@ -68,11 +58,11 @@ const DashboardOverview = () => {
       status: "info"
     },
     {
-      id: 5,
-      type: "blockchain",
-      message: "Blockchain verification completed for 45 new records",
-      time: "1 day ago",
-      icon: Shield,
+      id: 4,
+      type: "maintenance",  
+      message: "Scheduled maintenance completed for Track Section A-5",
+      time: "2 days ago",
+      icon: Wrench,
       status: "success"
     }
   ];
@@ -126,12 +116,12 @@ const DashboardOverview = () => {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2">Railway Track Parts Management Dashboard</h2>
         <p className="text-muted-foreground">
-          Comprehensive overview of inventory, inspections, AI predictions, and blockchain verification
+          Comprehensive overview of inventory, inspections, and system status
         </p>
       </div>
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
         <Card className="industrial-shadow">
           <CardContent className="p-6">
             <div className="flex items-center">
@@ -161,24 +151,11 @@ const DashboardOverview = () => {
         <Card className="industrial-shadow">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Brain className="h-8 w-8 text-primary" />
+              <Truck className="h-8 w-8 text-primary" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">AI Predictions</p>
-                <p className="text-2xl font-bold">47</p>
-                <p className="text-xs text-inspection-critical">3 critical alerts</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="industrial-shadow blockchain-verified">
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <Shield className="h-8 w-8 text-blockchain-verified" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Blockchain Records</p>
-                <p className="text-2xl font-bold">1,247</p>
-                <p className="text-xs text-blockchain-verified">100% verified</p>
+                <p className="text-sm font-medium text-muted-foreground">Active Vendors</p>
+                <p className="text-2xl font-bold">{vendorPerformance.length}</p>
+                <p className="text-xs text-inspection-ok">All verified</p>
               </div>
             </div>
           </CardContent>
@@ -223,12 +200,12 @@ const DashboardOverview = () => {
             </CardContent>
           </Card>
 
-          {/* Critical AI Alerts */}
+          {/* Critical Alerts */}
           <Card className="industrial-shadow status-critical">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <AlertTriangle className="h-5 w-5 text-inspection-critical" />
-                <span>Critical AI Alerts</span>
+                <span>Critical Alerts</span>
               </CardTitle>
               <CardDescription>Immediate attention required</CardDescription>
             </CardHeader>
@@ -372,24 +349,24 @@ const DashboardOverview = () => {
           </Card>
 
           {/* System Status */}
-          <Card className="industrial-shadow blockchain-verified">
+          <Card className="industrial-shadow">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Shield className="h-5 w-5" />
+                <CheckCircle className="h-5 w-5" />
                 <span>System Status</span>
               </CardTitle>
               <CardDescription>Current system health</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm">Blockchain Network</span>
-                <Badge variant="outline" className="text-blockchain-verified border-blockchain-verified">
+                <span className="text-sm">Database</span>
+                <Badge variant="outline" className="text-inspection-ok border-inspection-ok">
                   Online
                 </Badge>
               </div>
               
               <div className="flex items-center justify-between">
-                <span className="text-sm">AI Analytics</span>
+                <span className="text-sm">Photo Storage</span>
                 <Badge variant="outline" className="text-inspection-ok border-inspection-ok">
                   Active
                 </Badge>

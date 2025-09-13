@@ -48,7 +48,7 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Railway System Custom Colors
+        // Railway System Custom Colors - removed blockchain references
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
@@ -68,9 +68,6 @@ export default {
           ok: "hsl(var(--inspection-ok))",
           warning: "hsl(var(--inspection-warning))",
           critical: "hsl(var(--inspection-critical))",
-        },
-        blockchain: {
-          verified: "hsl(var(--blockchain-verified))",
         },
       },
       borderRadius: {

@@ -22,6 +22,7 @@ import {
   Eye
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PhotoUploader from "@/components/PhotoUploader";
 
 interface InspectionRecord {
   id: string;
@@ -34,7 +35,6 @@ interface InspectionRecord {
   findings: string;
   images?: string[];
   nextInspection?: string;
-  blockchainHash?: string;
 }
 
 const InspectorModule = () => {
@@ -48,8 +48,7 @@ const InspectorModule = () => {
       inspector: "Alice Johnson",
       result: "ok",
       findings: "Visual inspection shows no signs of wear or damage. Torque within specifications.",
-      nextInspection: "2024-11-15",
-      blockchainHash: "0x9b2c4f8e..."
+      nextInspection: "2024-11-15"
     },
     {
       id: "INSP-002",
@@ -60,8 +59,7 @@ const InspectorModule = () => {
       inspector: "Robert Chen",
       result: "defect",
       findings: "Minor surface cracking observed on the underside. Requires monitoring.",
-      nextInspection: "2024-10-20",
-      blockchainHash: "0x7a5d3e1b..."
+      nextInspection: "2024-10-20"
     },
     {
       id: "INSP-003",
@@ -72,8 +70,7 @@ const InspectorModule = () => {
       inspector: "Maria Garcia",
       result: "replace",
       findings: "Significant concrete deterioration and structural integrity compromised.",
-      nextInspection: "Immediate replacement required",
-      blockchainHash: "0x4c8f2a9d..."
+      nextInspection: "Immediate replacement required"
     }
   ]);
 
@@ -115,8 +112,7 @@ const InspectorModule = () => {
     
     const inspection: InspectionRecord = {
       ...newInspection as InspectionRecord,
-      id: inspectionId,
-      blockchainHash: "0x" + Math.random().toString(36).substring(2, 10) + "..."
+      id: inspectionId
     };
 
     setInspections([...inspections, inspection]);
@@ -134,7 +130,7 @@ const InspectorModule = () => {
 
     toast({
       title: "Inspection Recorded Successfully",
-      description: `Inspection ${inspectionId} has been submitted to blockchain`,
+      description: `Inspection ${inspectionId} has been submitted`,
     });
   };
 
@@ -409,15 +405,16 @@ const InspectorModule = () => {
             </div>
 
             <div className="flex space-x-4">
-              <Button 
-                onClick={handleTakePhoto}
-                variant="outline"
-                disabled={photoMode}
-                className="flex items-center space-x-2"
-              >
-                <Camera className="h-4 w-4" />
-                {photoMode ? "Taking Photo..." : "Take Photo"}
-              </Button>
+              <PhotoUploader 
+                partId={newInspection.partId}
+                inspectionId="new-inspection"
+                onPhotosUploaded={(photos) => {
+                  toast({
+                    title: "Photos Added",
+                    description: `${photos.length} evidence photos uploaded`,
+                  });
+                }}
+              />
               
               <Button onClick={handleSubmitInspection} className="flex-1 railway-gradient" size="lg">
                 Submit Inspection
