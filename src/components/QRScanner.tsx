@@ -14,9 +14,22 @@ import {
   Calendar,
   MapPin,
   Wrench,
-  User
+  User,
+  Image as ImageIcon
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PhotoUploader from "./PhotoUploader";
+
+interface PhotoEvidence {
+  id: string;
+  filename: string;
+  url: string;
+  description: string;
+  partId?: string;
+  inspectionId?: string;
+  uploadDate: string;
+  tags: string[];
+}
 
 interface TrackPart {
   id: string;
@@ -29,12 +42,14 @@ interface TrackPart {
   status: "active" | "inspection_due" | "maintenance_required" | "retired";
   lastInspection?: string;
   nextInspection?: string;
+  photos?: PhotoEvidence[];
 }
 
 const QRScanner = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scannedPart, setScannedPart] = useState<TrackPart | null>(null);
   const [manualQRInput, setManualQRInput] = useState("");
+  const [partPhotos, setPartPhotos] = useState<PhotoEvidence[]>([]);
   const { toast } = useToast();
 
   const mockTrackParts: Record<string, TrackPart> = {
@@ -48,7 +63,8 @@ const QRScanner = () => {
       location: "Track Section A-12, KM 145.2",
       status: "active",
       lastInspection: "2024-08-15",
-      nextInspection: "2024-11-15"
+      nextInspection: "2024-11-15",
+      photos: []
     },
     "TRP-RP-002-2024": {
       id: "TRP-RP-002-2024",
@@ -60,7 +76,8 @@ const QRScanner = () => {
       location: "Track Section B-8, KM 203.7",
       status: "inspection_due",
       lastInspection: "2024-07-20",
-      nextInspection: "2024-10-20"
+      nextInspection: "2024-10-20",
+      photos: []
     }
   };
 
@@ -73,6 +90,7 @@ const QRScanner = () => {
       const part = mockTrackParts[randomQR];
       
       setScannedPart(part);
+      setPartPhotos(part.photos || []);
       setIsScanning(false);
       
       toast({
@@ -86,6 +104,7 @@ const QRScanner = () => {
     const part = mockTrackParts[manualQRInput];
     if (part) {
       setScannedPart(part);
+      setPartPhotos(part.photos || []);
       toast({
         title: "Part Found",
         description: `Retrieved ${part.type} details`,
@@ -95,6 +114,19 @@ const QRScanner = () => {
         title: "Part Not Found",
         description: "QR code not found in database",
         variant: "destructive",
+      });
+    }
+  };
+
+  const handlePhotoUpload = (photos: PhotoEvidence[]) => {
+    setPartPhotos(photos);
+    if (scannedPart) {
+      const updatedPart = { ...scannedPart, photos: photos };
+      setScannedPart(updatedPart);
+      // In a real app, you would save this to your database here
+      toast({
+        title: "Photos Updated",
+        description: `${photos.length} photo(s) stored for ${scannedPart.type}`,
       });
     }
   };
@@ -270,6 +302,38 @@ const QRScanner = () => {
                     </div>
                   </div>
                 )}
+
+                <Separator />
+
+                {/* Photo Upload Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                    <h4 className="text-sm font-medium">Evidence Photos</h4>
+                  </div>
+                  <PhotoUploader 
+                    partId={scannedPart.id}
+                    onPhotosUploaded={handlePhotoUpload} 
+                  />
+                  
+                  {/* Display Uploaded Photos */}
+                  {partPhotos.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Evidence Photos ({partPhotos.length})</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {partPhotos.map((photo) => (
+                          <div key={photo.id} className="aspect-square bg-muted rounded-lg overflow-hidden border">
+                            <img 
+                              src={photo.url} 
+                              alt={photo.description || `Evidence ${photo.filename}`} 
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="text-center py-8">
